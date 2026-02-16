@@ -4,6 +4,7 @@
 #include <string>
 #include <expected>
 #include <chrono>
+#include <limits>
 
 // boost
 #include <boost/asio.hpp>

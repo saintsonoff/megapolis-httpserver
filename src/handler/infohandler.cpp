@@ -16,10 +16,23 @@ namespace beast = boost::beast;
 namespace asio = boost::asio;
 
 
-asio::awaitable<beast::http::message_generator> InfoHandler::handle(Request&& req) {
-    beast::http::response<beast::http::string_body> res{beast::http::status::ok, req.version()};
+asio::awaitable<beast::http::message_generator> InfoHandler::handle(RequestContext&& req) {
+    while (!req.parser->is_done()) {
+        char discard[1 << 16];
+        req.parser->get().body().data = discard;
+        req.parser->get().body().size = sizeof(discard);
+        try {
+            co_await beast::http::async_read_some(*req.socket, *req.buffer, *req.parser, asio::use_awaitable);
+        } catch (const boost::system::system_error& e) {
+            if (e.code() != beast::http::error::need_buffer)
+                throw;
+        }
+    }
+
+    auto& msg = req.parser->get();
+    beast::http::response<beast::http::string_body> res{beast::http::status::ok, msg.version()};
     res.set(beast::http::field::content_type, "text/plain");
-    res.keep_alive(req.keep_alive());
+    res.keep_alive(msg.keep_alive());
     res.body() = std::string{kMessage};
     res.prepare_payload();
     co_return res;

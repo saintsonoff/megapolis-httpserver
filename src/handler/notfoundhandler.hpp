@@ -20,7 +20,7 @@ namespace asio = boost::asio;
 
 class NotFoundHandler : public IHandler {
 public:
-    asio::awaitable<beast::http::message_generator> handle(Request&& req) override;
+    asio::awaitable<beast::http::message_generator> handle(RequestContext&& req) override;
 };
 
 

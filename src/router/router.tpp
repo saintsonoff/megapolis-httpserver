@@ -6,15 +6,16 @@ Router<HandlerFabricsRangeType>::Router(HandlerFabricsRangeType range) : handler
 
 
 template<IsHandlerFabricsRange HandlerFabricsRangeType>
-Handler Router<HandlerFabricsRangeType>::route(const Request& req) const {
+Handler Router<HandlerFabricsRangeType>::route(const RequestContext& req) const {
+    auto& msg = req.parser->get();
     auto it = std::ranges::find_if(handlers_fabric,
-        [&req](const auto& handle) {
-            if (handle->endpoint() != req.target()) {
+        [&msg](const auto& handle) {
+            if (handle->endpoint() != msg.target()) {
                 return false;
             }
             auto method = handle->method();
             if (method) {
-                return *method == req.method();
+                return *method == msg.method();
             }
             return true;
         }

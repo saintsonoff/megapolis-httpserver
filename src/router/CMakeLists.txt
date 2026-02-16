@@ -11,6 +11,7 @@ Boost::boost
 Boost::system
     INTERFACE
 handler
+notfoundhandler
 utility
 )
 

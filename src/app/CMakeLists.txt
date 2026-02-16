@@ -11,4 +11,6 @@ PRIVATE
     root_checker
     utility
     server
+    fileuploadhandler
+    infohandler
 )

@@ -17,7 +17,7 @@ namespace beast = boost::beast;
 
 class FileUploadHandler : public IHandler {
 public:
-    asio::awaitable<beast::http::message_generator> handle(Request&& req) override;
+    asio::awaitable<beast::http::message_generator> handle(RequestContext&& req) override;
 };
 
 

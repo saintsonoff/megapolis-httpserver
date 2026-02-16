@@ -22,7 +22,7 @@ class InfoHandler : public IHandler {
 private:
     static constexpr std::string_view kMessage = "all ok";
 public:
-    asio::awaitable<beast::http::message_generator> handle(Request&& req) override;
+    asio::awaitable<beast::http::message_generator> handle(RequestContext&& req) override;
 };
 
 

@@ -26,7 +26,11 @@ namespace beast = boost::beast;
 namespace asio = boost::asio;
 
 
-using Request = beast::http::request<beast::http::string_body>;
+struct RequestContext {
+    beast::http::request_parser<beast::http::buffer_body>* parser;
+    beast::tcp_stream* socket;
+    beast::flat_buffer* buffer;
+};
 
 class IHandler;
 using Handler = std::shared_ptr<IHandler>;
@@ -42,7 +46,7 @@ concept IsHandlerFabricsRange = std::ranges::range<HandlerFabricsRangeType>
 
 class IHandler {
 public:
-    virtual asio::awaitable<beast::http::message_generator> handle(Request&& req) = 0;
+    virtual asio::awaitable<beast::http::message_generator> handle(RequestContext&& req) = 0;
     virtual ~IHandler() {};
 };
 

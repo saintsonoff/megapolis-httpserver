@@ -77,22 +77,23 @@ asio::awaitable<void> Server<RouterType>::session(beast::tcp_stream stream) {
         while (true) {
             stream.expires_after(std::chrono::seconds(30));
 
-            beast::http::request_parser<beast::http::string_body> parser;
-            parser.body_limit(10 * 1024 * 1024);
+            beast::http::request_parser<beast::http::buffer_body> parser;
+            parser.body_limit(std::numeric_limits<std::uint64_t>::max());
 
-            co_await beast::http::async_read(stream, buffer, parser, asio::use_awaitable);
+            co_await beast::http::async_read_header(stream, buffer, parser, asio::use_awaitable);
 
-            auto req = parser.release();
-            bool keep_alive = req.keep_alive();
+            auto& msg = parser.get();
+            bool keep_alive = msg.keep_alive();
 
             BOOST_LOG_TRIVIAL(debug) << std::format("[{}] {} {} keep_alive={}", 
-                                            peer, std::string{req.method_string()}, 
-                                            std::string{req.target()}, keep_alive);
+                                            peer, std::string{msg.method_string()}, 
+                                            std::string{msg.target()}, keep_alive);
 
-            auto handler = m_router.route(req);
-            beast::http::message_generator msg = co_await handler->handle(std::move(req));
+            RequestContext ctx{&parser, &stream, &buffer};
+            auto handler = m_router.route(ctx);
+            beast::http::message_generator response = co_await handler->handle(std::move(ctx));
 
-            co_await beast::async_write(stream, std::move(msg), asio::use_awaitable);
+            co_await beast::async_write(stream, std::move(response), asio::use_awaitable);
 
             if (!keep_alive) {
                 BOOST_LOG_TRIVIAL(debug) << std::format("[{}] closing, keep-alive not requested", peer);
