@@ -8,6 +8,7 @@
 #include <ranges>
 #include <concepts>
 #include <utility>
+#include <optional>
 
 // boost
 #include <boost/beast.hpp>
@@ -39,21 +40,9 @@ concept IsHandlerFabricsRange = std::ranges::range<HandlerFabricsRangeType>
     && std::same_as<std::ranges::range_value_t<HandlerFabricsRangeType>, HandlerFabric>;
 
 
-struct RequestContext {
-public:
-    asio::ip::tcp::socket socket;
-    beast::flat_buffer buffer;
-    // addition move, need be initialized
-    std::unique_ptr<beast::http::request_parser<beast::http::empty_body>> parser;
-
-public:
-    const auto& header() const { return parser->get(); }
-};
-
-
 class IHandler {
 public:
-    virtual asio::awaitable<void> handle(RequestContext req) = 0;
+    virtual asio::awaitable<beast::http::message_generator> handle(Request&& req) = 0;
     virtual ~IHandler() {};
 };
 

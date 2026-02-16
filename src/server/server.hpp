@@ -3,6 +3,7 @@
 // stl
 #include <string>
 #include <expected>
+#include <chrono>
 
 // boost
 #include <boost/asio.hpp>
@@ -21,6 +22,7 @@ namespace httpserver {
 namespace beast = boost::beast;
 namespace asio = boost::asio;
 
+
 template<IsRouter RouterType>
 class Server {
 public:
@@ -28,6 +30,10 @@ public:
     ~Server();
 public:
     std::expected<void, std::string> run();
+
+private:
+    asio::awaitable<void> listen(beast::net::ip::port_type port);
+    asio::awaitable<void> session(beast::tcp_stream stream);
 
 private:
     RouterType m_router;

@@ -22,8 +22,8 @@ namespace beast = boost::beast;
 namespace asio = boost::asio;
 
 template<typename RouterType>
-concept IsRouter = requires(RouterType router, beast::http::request<boost::beast::http::empty_body> header) {
-    {router.route(header)} -> std::same_as<Handler>;
+concept IsRouter = requires(RouterType router, const Request& req) {
+    {router.route(req)} -> std::same_as<Handler>;
 };
 
 template<IsHandlerFabricsRange HandlerFabricsRangeType>
@@ -32,7 +32,7 @@ public:
     Router(HandlerFabricsRangeType range);
 
 public:
-    Handler route(beast::http::request<boost::beast::http::empty_body> header) const;
+    Handler route(const Request& req) const;
 
 private:
     HandlerFabricsRangeType handlers_fabric;

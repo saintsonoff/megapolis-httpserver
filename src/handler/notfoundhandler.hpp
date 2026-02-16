@@ -1,5 +1,8 @@
 #pragma once
 
+// stl
+#include <memory>
+
 // boost
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
@@ -17,7 +20,7 @@ namespace asio = boost::asio;
 
 class NotFoundHandler : public IHandler {
 public:
-    asio::awaitable<void> handle(RequestContext req) override;
+    asio::awaitable<beast::http::message_generator> handle(Request&& req) override;
 };
 
 

@@ -6,15 +6,15 @@ Router<HandlerFabricsRangeType>::Router(HandlerFabricsRangeType range) : handler
 
 
 template<IsHandlerFabricsRange HandlerFabricsRangeType>
-Handler Router<HandlerFabricsRangeType>::route(beast::http::request<boost::beast::http::empty_body> header) const {    
+Handler Router<HandlerFabricsRangeType>::route(const Request& req) const {
     auto it = std::ranges::find_if(handlers_fabric,
-        [&header](const auto& handle) {
-            if (handle->endpoint() != header.target()) {
+        [&req](const auto& handle) {
+            if (handle->endpoint() != req.target()) {
                 return false;
             }
             auto method = handle->method();
             if (method) {
-                return *method == header.method();
+                return *method == req.method();
             }
             return true;
         }

@@ -2,6 +2,7 @@
 
 // boost
 #include <boost/asio.hpp>
+#include <boost/beast.hpp>
 
 // self
 #include <handler.hpp>
@@ -11,11 +12,12 @@ namespace httpserver {
 
 
 namespace asio = boost::asio;
+namespace beast = boost::beast;
 
 
 class FileUploadHandler : public IHandler {
 public:
-    asio::awaitable<void> handle(RequestContext req) override;
+    asio::awaitable<beast::http::message_generator> handle(Request&& req) override;
 };
 
 
