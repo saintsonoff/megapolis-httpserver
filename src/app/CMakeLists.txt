@@ -5,4 +5,10 @@ find_package(Boost REQUIRED CONFIG COMPONENTS log log_setup system)
 
 add_executable(${TARGET_NAME} main.cpp)
 
-target_link_libraries(${TARGET_NAME} PRIVATE Boost::boost Boost::system Boost::log Boost::log_setup)
+target_link_libraries(
+    ${TARGET_NAME}
+PRIVATE
+    root_checker
+    utility
+    server
+)

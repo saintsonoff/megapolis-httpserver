@@ -9,5 +9,9 @@ add_compile_options(
     -Wextra
 )
 
-
+add_subdirectory(root_checker)
+add_subdirectory(utility)
+add_subdirectory(handler)
+add_subdirectory(router)
+add_subdirectory(server)
 add_subdirectory(app)

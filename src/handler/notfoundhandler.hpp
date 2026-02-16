@@ -1,0 +1,24 @@
+#pragma once
+
+// boost
+#include <boost/asio.hpp>
+#include <boost/beast.hpp>
+
+// self
+#include <handler.hpp>
+
+
+
+namespace httpserver {
+
+
+namespace asio = boost::asio;
+
+
+class NotFoundHandler : public IHandler {
+public:
+    asio::awaitable<void> handle(RequestContext req) override;
+};
+
+
+} // namespace httpserver
