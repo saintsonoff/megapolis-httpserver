@@ -1,0 +1,52 @@
+/// @file    infohandler.cpp
+/// @brief   Implementation of InfoHandler – health-check endpoint.
+/// @author  saintson (pan.aleksandr.off@gmail.com)
+/// @date    17.02.2026
+/// @copyright Copyright (c) 2026 saintson. All rights reserved.
+///            Licensed under the GNU General Public License v3.0 (GPLv3).
+
+#include "infohandler.hpp"
+
+// boost
+#include <boost/asio.hpp>
+#include <boost/beast.hpp>
+#include <boost/log/trivial.hpp>
+
+// self
+#include <logging.hpp>
+#include <handler.hpp>
+
+
+namespace httpserver {
+
+
+namespace beast = boost::beast;
+namespace asio = boost::asio;
+
+
+asio::awaitable<beast::http::message_generator> InfoHandler::handle(RequestContext&& req) {
+    connection_logging(req);
+
+    while (!req.parser->is_done()) {
+        char discard[1 << 16];
+        req.parser->get().body().data = discard;
+        req.parser->get().body().size = sizeof(discard);
+        try {
+            co_await beast::http::async_read_some(*req.socket, *req.buffer, *req.parser, asio::use_awaitable);
+        } catch (const boost::system::system_error& e) {
+            if (e.code() != beast::http::error::need_buffer)
+                throw;
+        }
+    }
+
+    auto& msg = req.parser->get();
+    beast::http::response<beast::http::string_body> res{beast::http::status::ok, msg.version()};
+    res.set(beast::http::field::content_type, "text/plain");
+    res.keep_alive(msg.keep_alive());
+    res.body() = std::string{kMessage};
+    res.prepare_payload();
+    co_return res;
+}
+
+
+} // namespace httpserver

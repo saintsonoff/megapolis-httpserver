@@ -39,3 +39,14 @@
 
 # debug information files
 *.dwo
+
+# build staff
+**/build
+
+# vscode staff
+**/.cache
+**/.vscode
+**/.devcontainer
+
+# secret
+**/.env

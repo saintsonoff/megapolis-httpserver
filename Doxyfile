@@ -1,0 +1,52 @@
+PROJECT_NAME           = "megapolis-httpserver"
+PROJECT_NUMBER         = "1.0.0"
+PROJECT_BRIEF          = "Comprehensive C++ System Documentation"
+OUTPUT_DIRECTORY       = docs
+CREATE_SUBDIRECTORY    = YES
+OUTPUT_LANGUAGE        = English
+
+FILE_PATTERNS          = *.cpp *.hpp *.tpp *.h *.c
+RECURSIVE              = YES
+INPUT                  = src/
+EXCLUDE                = build/ .git/ .cache/
+
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+EXTRACT_LOCAL_CLASSES  = YES
+EXTRACT_ALL            = YES 
+
+JAVADOC_AUTOBRIEF      = YES
+QT_AUTOBRIEF           = YES
+MULTILINE_CPP_IS_BRIEF = NO
+TAB_SIZE               = 4
+
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+STRIP_CODE_COMMENTS    = NO
+REFERENCED_BY_RELATION = YES
+REFERENCES_RELATION    = YES
+
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_FILE_EXTENSION    = .html
+
+GENERATE_TREEVIEW      = YES 
+USE_MATHJAX            = YES
+
+GENERATE_LATEX         = NO
+GENERATE_RTF           = NO
+GENERATE_XML           = NO
+
+HAVE_DOT               = YES
+CLASS_GRAPH            = YES
+COLLABORATION_GRAPH    = YES
+GROUP_GRAPHS           = YES
+TEMPLATE_RELATIONS     = YES
+INCLUDE_GRAPH          = YES
+INCLUDED_BY_GRAPH      = YES
+CALL_GRAPH             = YES
+CALLER_GRAPH           = YES
+DIRECTORY_GRAPH        = YES
+DOT_IMAGE_FORMAT       = svg
+INTERACTIVE_SVG        = YES
