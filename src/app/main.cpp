@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include <thread>
 
 // self
 #include <root_checker.hpp>
@@ -24,12 +25,14 @@ int main() {
         return NOT_ROOT_EXECUTION;
     }
 
+    const std::size_t kUploadConcurrencySize = std::thread::hardware_concurrency() - 1;
+
     Server server{1616,
         Router{std::vector<HandlerFabric>{
             std::make_shared<HandlerFabricImpl<InfoHandler>>("/info"),
-            std::make_shared<HandlerFabricImpl<FileUploadHandler>>(beast::http::verb::post, "/upload"),
             std::make_shared<ParallelHandlerFabric>(
-                std::make_shared<HandlerFabricImpl<InfoHandler>>("/pinfo"), std::size_t{2}
+                std::make_shared<HandlerFabricImpl<FileUploadHandler>>(beast::http::verb::post, "/upload"),
+                std::size_t{kUploadConcurrencySize}
             )
         }}
     };
