@@ -47,3 +47,6 @@
 **/.cache
 **/.vscode
 **/.devcontainer
+
+# secret
+**/.env

@@ -126,3 +126,29 @@ ${TARGET_NAME}
     PUBLIC
 ${CMAKE_CURRENT_SOURCE_DIR}
 )
+
+
+# log handler
+set(TARGET_NAME loghandler)
+
+add_library(
+    ${TARGET_NAME}
+STATIC
+    loghandler.cpp
+)
+
+target_link_libraries(
+${TARGET_NAME}
+    PUBLIC
+Boost::boost
+Boost::system
+    PUBLIC
+utility
+handler
+)
+
+target_include_directories(
+${TARGET_NAME}
+    PUBLIC
+${CMAKE_CURRENT_SOURCE_DIR}
+)

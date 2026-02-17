@@ -25,6 +25,7 @@
 #include <infohandler.hpp>
 #include <fileuploadhandler.hpp>
 #include <parallelhandler.hpp>
+#include <loghandler.hpp>
 
 
 int main() {
@@ -41,6 +42,7 @@ int main() {
     Server server{1616,
         Router{std::vector<HandlerFabric>{
             std::make_shared<HandlerFabricImpl<InfoHandler>>("/info"),
+            std::make_shared<HandlerFabricImpl<LogHandler>>(beast::http::verb::get, "/log"),
             std::make_shared<ParallelHandlerFabric>(
                 std::make_shared<HandlerFabricImpl<FileUploadHandler>>(beast::http::verb::post, "/upload"),
                 std::size_t{kUploadConcurrencySize}

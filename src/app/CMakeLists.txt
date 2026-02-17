@@ -14,4 +14,5 @@ PRIVATE
     parallelhandler
     fileuploadhandler
     infohandler
+    loghandler
 )
