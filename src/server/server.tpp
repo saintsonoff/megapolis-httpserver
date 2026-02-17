@@ -58,7 +58,7 @@ asio::awaitable<void> Server<RouterType>::listen(beast::net::ip::port_type port)
     BOOST_LOG_TRIVIAL(info) << std::format("listener started on 0.0.0.0:{}", port);
 
     while (!m_ctx.stopped()) {
-        auto socket = co_await acceptor.async_accept(asio::use_awaitable);
+        auto socket = co_await acceptor.async_accept(asio::make_strand(m_ctx.get_executor()), asio::use_awaitable);
         auto remote = socket.remote_endpoint();
         BOOST_LOG_TRIVIAL(debug) << std::format("new connection from {}:{}", 
                                         remote.address().to_string(), remote.port());
@@ -75,7 +75,7 @@ asio::awaitable<void> Server<RouterType>::session(beast::tcp_stream stream) {
 
     try {
         while (true) {
-            stream.expires_after(std::chrono::seconds(30));
+            stream.expires_after(std::chrono::seconds(5));
 
             beast::http::request_parser<beast::http::buffer_body> parser;
             parser.body_limit(std::numeric_limits<std::uint64_t>::max());
@@ -86,6 +86,8 @@ asio::awaitable<void> Server<RouterType>::session(beast::tcp_stream stream) {
                 break;
             }
             }
+
+            stream.expires_never();
 
             auto& msg = parser.get();
             bool keep_alive = msg.keep_alive();
@@ -128,7 +130,9 @@ bool Server<RouterType>::error_logging(const boost::system::error_code& error_co
             BOOST_LOG_TRIVIAL(debug) << std::format("[{}] operation cancelled", peer);
         }
         else {
-            BOOST_LOG_TRIVIAL(error) << std::format("[{}] session error: {}", peer, error_code.message());
+            BOOST_LOG_TRIVIAL(error) << std::format("[{}] session error: {} {} (code: {})",
+                                                        peer, error_code.category().name(),
+                                                        error_code.message(), error_code.value());
         }
         return true;
     }

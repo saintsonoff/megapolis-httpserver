@@ -78,15 +78,10 @@ asio::awaitable<beast::http::message_generator> FileUploadHandler::handle(Reques
         req.parser->get().body().data = chunk;
         req.parser->get().body().size = sizeof(chunk);
 
-        try {
-            co_await beast::http::async_read_some(*req.socket, *req.buffer, *req.parser, asio::use_awaitable);
-        } catch (const boost::system::system_error& e) {
-            if (e.code() != beast::http::error::need_buffer)
-                throw;
-        }
+        co_await beast::http::async_read_some(*req.socket, *req.buffer, *req.parser, asio::use_awaitable);
 
-        std::size_t n = sizeof(chunk) - req.parser->get().body().size;
-        file.write(chunk, static_cast<std::streamsize>(n));
+        std::size_t read_size = sizeof(chunk) - req.parser->get().body().size;
+        file.write(chunk, static_cast<std::streamsize>(read_size));
 
         if (!file) {
             BOOST_LOG_TRIVIAL(error) << "write error to /tmp/data.bin";
@@ -100,7 +95,7 @@ asio::awaitable<beast::http::message_generator> FileUploadHandler::handle(Reques
             co_return res;
         }
 
-        total += n;
+        total += read_size;
     }
 
     file.close();
