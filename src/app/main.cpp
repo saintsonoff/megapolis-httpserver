@@ -1,11 +1,22 @@
-#include <boost/beast.hpp>
-#include <boost/log/trivial.hpp>
+/// @file    main.cpp
+/// @brief   Application entry point – configures routes and starts the HTTP server.
+/// @author  saintson (pan.aleksandr.off@gmail.com)
+/// @date    17.02.2026
+/// @copyright Copyright (c) 2026 saintson. All rights reserved.
+///            Licensed under the GNU General Public License v3.0 (GPLv3).
 
+// stl
 #include <vector>
 #include <memory>
 #include <thread>
+#include <cstddef>
+
+// boost
+#include <boost/beast.hpp>
+#include <boost/log/trivial.hpp>
 
 // self
+#include <logging.hpp>
 #include <root_checker.hpp>
 #include <router.hpp>
 #include <server.hpp>

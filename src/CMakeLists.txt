@@ -9,6 +9,9 @@ add_compile_options(
     -Wextra
 )
 
+find_package(Boost REQUIRED)
+message(STATUS "Boost version: ${Boost_VERSION}")
+
 add_subdirectory(root_checker)
 add_subdirectory(utility)
 add_subdirectory(handler)

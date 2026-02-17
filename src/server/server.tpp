@@ -1,3 +1,10 @@
+/// @file    server.tpp
+/// @brief   Template implementation of Server – listener, session, and error logging.
+/// @author  saintson (pan.aleksandr.off@gmail.com)
+/// @date    17.02.2026
+/// @copyright Copyright (c) 2026 saintson. All rights reserved.
+///            Licensed under the GNU General Public License v3.0 (GPLv3).
+
 namespace httpserver {
 
 
@@ -91,6 +98,10 @@ asio::awaitable<void> Server<RouterType>::session(beast::tcp_stream stream) {
 
             auto& msg = parser.get();
             bool keep_alive = msg.keep_alive();
+
+            BOOST_LOG_TRIVIAL(debug) << std::format("[{}] {} {} keep_alive={}", 
+                                            peer, std::string{msg.method_string()}, 
+                                            std::string{msg.target()}, keep_alive);
 
             RequestContext ctx{&parser, &stream, &buffer};
             auto handler = m_router.route(ctx);

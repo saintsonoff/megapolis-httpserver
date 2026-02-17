@@ -1,3 +1,10 @@
+/// @file    root_checker.cpp
+/// @brief   Implementation of is_root_execution() using POSIX geteuid().
+/// @author  saintson (pan.aleksandr.off@gmail.com)
+/// @date    17.02.2026
+/// @copyright Copyright (c) 2026 saintson. All rights reserved.
+///            Licensed under the GNU General Public License v3.0 (GPLv3).
+
 #include "root_checker.hpp"
 
 // stl

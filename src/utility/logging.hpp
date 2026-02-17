@@ -1,3 +1,10 @@
+/// @file    logging.hpp
+/// @brief   Boost.Log initialisation and auto-init singleton for the HTTP server.
+/// @author  saintson (pan.aleksandr.off@gmail.com)
+/// @date    17.02.2026
+/// @copyright Copyright (c) 2026 saintson. All rights reserved.
+///            Licensed under the GNU General Public License v3.0 (GPLv3).
+
 #pragma once
 
 #include <boost/log/trivial.hpp>
@@ -8,6 +15,8 @@
 #include <boost/log/support/date_time.hpp>
 #include <boost/log/attributes.hpp>
 
+/// @brief Initialises Boost.Log with a console sink, timestamps, thread IDs,
+///        and severity-based filtering (debug in Debug builds, info in Release).
 inline void init_logging() {
     namespace log = boost::log;
     log::add_common_attributes();
@@ -33,7 +42,9 @@ inline void init_logging() {
 namespace httpserver {
 
 
+/// @brief Internal detail namespace; holds the auto-init singleton.
 namespace details{
+    /// @brief Singleton whose constructor calls init_logging() at static-init time.
     inline const struct LogInit {
         LogInit() { init_logging(); }
     } log_init;

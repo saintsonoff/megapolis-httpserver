@@ -1,3 +1,10 @@
+/// @file    fileuploadhandler.cpp
+/// @brief   Implementation of FileUploadHandler – incremental body-to-file writer.
+/// @author  saintson (pan.aleksandr.off@gmail.com)
+/// @date    17.02.2026
+/// @copyright Copyright (c) 2026 saintson. All rights reserved.
+///            Licensed under the GNU General Public License v3.0 (GPLv3).
+
 #include "fileuploadhandler.hpp"
 
 
@@ -20,6 +27,8 @@
 namespace {
 
 
+/// @brief Generates a nanosecond-precision timestamp prefix string.
+/// @return A string formatted as "YYYYMMDD_HHMMSS_NNNNNNNNN".
 std::string get_timestamp_prefix() {
     auto now = std::chrono::system_clock::now();    
     auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(
@@ -30,6 +39,11 @@ std::string get_timestamp_prefix() {
                        ns.count());
 }
 
+/// @brief Builds a safe filesystem path by combining an upload directory,
+///        a timestamp prefix, and the sanitised base name of @p raw_filename.
+/// @param upload_dir    The target directory (e.g. "/tmp").
+/// @param raw_filename  An arbitrary filename; only the base name is kept.
+/// @return The full path string.
 std::string construct_path(const std::string& upload_dir, std::string raw_filename) {
     static 
     std::filesystem::path p(raw_filename);

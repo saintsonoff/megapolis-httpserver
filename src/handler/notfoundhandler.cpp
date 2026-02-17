@@ -1,3 +1,10 @@
+/// @file    notfoundhandler.cpp
+/// @brief   Implementation of NotFoundHandler – 404 fallback.
+/// @author  saintson (pan.aleksandr.off@gmail.com)
+/// @date    17.02.2026
+/// @copyright Copyright (c) 2026 saintson. All rights reserved.
+///            Licensed under the GNU General Public License v3.0 (GPLv3).
+
 #include "notfoundhandler.hpp"
 
 // stl
@@ -6,8 +13,10 @@
 // boost
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
+#include <boost/log/trivial.hpp>
 
 // self
+#include <logging.hpp>
 #include <handler.hpp>
 
 
