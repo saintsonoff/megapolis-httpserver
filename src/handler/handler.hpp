@@ -50,6 +50,14 @@ public:
     virtual ~IHandler() {};
 };
 
+inline void connection_logging(const RequestContext& req) {
+    auto& msg = req.parser->get();
+    auto ep = req.socket->socket().remote_endpoint();
+    auto peer = std::format("{}:{}", ep.address().to_string(), ep.port());
+    BOOST_LOG_TRIVIAL(debug) << std::format("[{}] {} {} keep_alive={}", 
+                                        peer, std::string{msg.method_string()}, 
+                                        std::string{msg.target()}, msg.keep_alive());
+}
 
 class IHandlerFabric {
 public:

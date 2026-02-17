@@ -3,10 +3,9 @@
 // boost
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
-#include <boost/log/trivial.hpp>
 
 // self
-#include <logging.hpp>
+#include <handler.hpp>
 
 
 namespace httpserver {
@@ -17,6 +16,8 @@ namespace asio = boost::asio;
 
 
 asio::awaitable<beast::http::message_generator> InfoHandler::handle(RequestContext&& req) {
+    connection_logging(req);
+
     while (!req.parser->is_done()) {
         char discard[1 << 16];
         req.parser->get().body().data = discard;

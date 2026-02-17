@@ -80,20 +80,26 @@ asio::awaitable<void> Server<RouterType>::session(beast::tcp_stream stream) {
             beast::http::request_parser<beast::http::buffer_body> parser;
             parser.body_limit(std::numeric_limits<std::uint64_t>::max());
 
-            co_await beast::http::async_read_header(stream, buffer, parser, asio::use_awaitable);
+            {
+            auto [error_code, _] = co_await beast::http::async_read_header(stream, buffer, parser, asio::as_tuple(asio::use_awaitable));
+            if (error_logging(error_code, peer)) {
+                break;
+            }
+            }
 
             auto& msg = parser.get();
             bool keep_alive = msg.keep_alive();
-
-            BOOST_LOG_TRIVIAL(debug) << std::format("[{}] {} {} keep_alive={}", 
-                                            peer, std::string{msg.method_string()}, 
-                                            std::string{msg.target()}, keep_alive);
 
             RequestContext ctx{&parser, &stream, &buffer};
             auto handler = m_router.route(ctx);
             beast::http::message_generator response = co_await handler->handle(std::move(ctx));
 
-            co_await beast::async_write(stream, std::move(response), asio::use_awaitable);
+            {
+            auto [error_code, _] = co_await beast::async_write(stream, std::move(response), asio::as_tuple(asio::use_awaitable));
+            if (error_logging(error_code, peer)) {
+                break;
+            }
+            }
 
             if (!keep_alive) {
                 BOOST_LOG_TRIVIAL(debug) << std::format("[{}] closing, keep-alive not requested", peer);
@@ -101,18 +107,32 @@ asio::awaitable<void> Server<RouterType>::session(beast::tcp_stream stream) {
             }
         }
     } catch (const boost::system::system_error& se) {
-        if (se.code() == beast::http::error::end_of_stream) {
-            BOOST_LOG_TRIVIAL(debug) << std::format("[{}] end of stream", peer);
-        } else if (se.code() == asio::error::operation_aborted) {
-            BOOST_LOG_TRIVIAL(debug) << std::format("[{}] timed out or cancelled", peer);
-        } else {
-            BOOST_LOG_TRIVIAL(error) << std::format("[{}] session error: {} (code: {})",
-                                            peer, se.code().message(), se.code().value());
-        }
+        error_logging(se.code(), peer);
     }
 
     beast::error_code ec;
     stream.socket().shutdown(asio::ip::tcp::socket::shutdown_send, ec);
+}
+
+
+template<IsRouter RouterType>
+bool Server<RouterType>::error_logging(const boost::system::error_code& error_code, const std::string& peer) {
+    if  (error_code) {
+        if (error_code == beast::http::error::end_of_stream) {
+            BOOST_LOG_TRIVIAL(debug) << std::format("[{}] peer closed connection", peer);
+        } 
+        else if (error_code == beast::error::timeout) {
+            BOOST_LOG_TRIVIAL(debug) << std::format("[{}] session idle timeout", peer);
+        }
+        else if (error_code == asio::error::operation_aborted) {
+            BOOST_LOG_TRIVIAL(debug) << std::format("[{}] operation cancelled", peer);
+        }
+        else {
+            BOOST_LOG_TRIVIAL(error) << std::format("[{}] session error: {}", peer, error_code.message());
+        }
+        return true;
+    }
+    return false;
 }
 
 

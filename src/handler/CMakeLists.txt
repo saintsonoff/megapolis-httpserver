@@ -24,6 +24,31 @@ ${TARGET_NAME}
 ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+# parallel execution handler
+set(TARGET_NAME parallelhandler)
+
+add_library(
+    ${TARGET_NAME}
+STATIC
+    parallelhandler.cpp
+)
+
+target_link_libraries(
+${TARGET_NAME}
+    PUBLIC
+Boost::boost
+Boost::system
+    PUBLIC
+utility
+handler
+)
+
+target_include_directories(
+${TARGET_NAME}
+    PUBLIC
+${CMAKE_CURRENT_SOURCE_DIR}
+)
+
 
 # info handler
 set(TARGET_NAME infohandler)
@@ -50,6 +75,7 @@ ${TARGET_NAME}
 ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+
 # notfound handler
 set(TARGET_NAME notfoundhandler)
 
@@ -74,6 +100,7 @@ ${TARGET_NAME}
     PUBLIC
 ${CMAKE_CURRENT_SOURCE_DIR}
 )
+
 
 # file upload handler
 set(TARGET_NAME fileuploadhandler)

@@ -37,6 +37,9 @@ private:
     asio::awaitable<void> session(beast::tcp_stream stream);
 
 private:
+    static bool error_logging(const boost::system::error_code& error, const std::string& peer);
+
+private:
     RouterType m_router;
     asio::io_context m_ctx;
     asio::signal_set m_signals;

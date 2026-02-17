@@ -12,6 +12,7 @@
 
 #include <infohandler.hpp>
 #include <fileuploadhandler.hpp>
+#include <parallelhandler.hpp>
 
 
 int main() {
@@ -26,7 +27,10 @@ int main() {
     Server server{1616,
         Router{std::vector<HandlerFabric>{
             std::make_shared<HandlerFabricImpl<InfoHandler>>("/info"),
-            std::make_shared<HandlerFabricImpl<FileUploadHandler>>(beast::http::verb::post, "/upload")
+            std::make_shared<HandlerFabricImpl<FileUploadHandler>>(beast::http::verb::post, "/upload"),
+            std::make_shared<ParallelHandlerFabric>(
+                std::make_shared<HandlerFabricImpl<InfoHandler>>("/pinfo"), std::size_t{2}
+            )
         }}
     };
 

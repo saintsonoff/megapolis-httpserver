@@ -11,6 +11,7 @@ PRIVATE
     root_checker
     utility
     server
+    parallelhandler
     fileuploadhandler
     infohandler
 )
